@@ -1,0 +1,20 @@
+A service is connected to the lifecycle of a thread where an activity is not.
+A service then spawns a Thread or an Executor some time after it has been created.
+A very common pattern in Services is once that Thread finishes it lets the Service you've created know that by calling stopSelf().
+There are 2 kinds of services Started Services, and Bound Services. And a Service can be both at the same time. 
+There are two types of services, Started Services and Bound Services. A Service can be both at the same time.
+Started Services are started and have no communication with a component outside of starting and stopping them. Unlike Started Services, Bound Services allow a connection to be established between the Android component and the Service. This allows methods to be called directly in the Service using an IBinder.
+Started Services can run in the foreground, which means the Android system gives the service highest priority, which will make the system do its best to not destroy the Service when the system is running low on system resources. This priority should only be used if its required to deliver a compelling user experience.
+When a Started Service moves into the foreground, it must display a persistent notification, explicitly notifying the user that the service is running. This is important because a Started Service in the foreground is detached from the lifecycle of UI components (with the exception of the persistent notification).
+When you want to take your Started Service out of foreground execution, you can call stopForeground(true). This will also take away the persistent notification. However, this will not stop the service. In order to do that you still have to call stopSelf()
+In either case, if the Service (Bound or Started) needs to send messages to the bound client or whatever component started a Service, it has to use something like LocalBroadcastManager when the the client and Service are local to one process.
+In order for a client component (Activity, Fragement, another Service) to bind to a Bound Service, bindService() must be called, with an explicit Intent just like with Started Services.
+In order to unBind() from a Bound Service, a calling simply calls unBindService(mServiceConnection). The system will then call onUnbind() on the Bound Service itself. If there are no more bound clients, then the system will call onDestroy() on the Bound Service, unless it is in the Started State. If the Service is not in a Started State, then onDestroy() gets called immediately, and the Bound Service will be killed
+
+Broadcast Receivers 
+When an event of interest occurs, you can use broadcast receivers to send or receive messages from the Android system or between Android apps. These events of interest can be various system events or custom broadcasts to notify other apps of something they might be interested in.
+When a broadcast is sent, the system automatically routes broadcasts to apps that have subscribed to receive that type of broadcast. 
+While they are a good tool, they should be used sparingly because creating apps that use broadcasts that run jobs in the background contribute to system performance. 
+A broadcast message itself is wrapped in an Intent object, whose action string identifies the event that occurred 
+
+
